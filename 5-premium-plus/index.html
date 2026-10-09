@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Строй дом в РОССИИ — дом в 3D до начала стройки</title>
+<meta name="description" content="Соберите свой дом в 3D, получите смету за минуту и следите за стройкой в личном кабинете. Строительство частных домов под ключ.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Prata&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0C0E12;--bg2:#11141A;--card:#161A21;--card2:#1C212A;--line:#272C36;--ink:#EEEBE5;--mute:#9BA0AA;--gold:#D4AF6A;--gold2:#B8904B;--ok:#5BC48A;--r:18px}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Manrope,system-ui,sans-serif;overflow-x:hidden}
+a{color:inherit}button{font:inherit;color:inherit;cursor:pointer}
+h1,h2,h3{font-family:Prata,Georgia,serif;font-weight:400;line-height:1.08;margin:0;letter-spacing:-.005em}
+.wr{max-width:1280px;margin:0 auto;padding:0 24px}
+.cap{font-size:.74rem;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:var(--gold)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:15px 26px;border-radius:999px;border:0;background:var(--gold);color:#15110A;font-weight:700;text-decoration:none;transition:transform .2s,background .2s,box-shadow .2s;white-space:nowrap}
+.btn:hover{background:#E2C083;transform:translateY(-1px);box-shadow:0 12px 30px -12px rgba(212,175,106,.6)}
+.btn.line{background:transparent;color:var(--ink);border:1px solid #3A404C}
+.btn.line:hover{border-color:var(--gold);color:var(--gold);box-shadow:none}
+.btn.sm{padding:10px 18px;font-size:.88rem}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+/* шапка */
+.hd{position:fixed;top:0;left:0;right:0;z-index:50;transition:background .3s,border-color .3s;border-bottom:1px solid transparent}
+.hd.sc{background:rgba(12,14,18,.86);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-color:var(--line)}
+.hd .wr{display:flex;align-items:center;justify-content:space-between;height:74px;gap:20px}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none;font-family:Prata,serif;font-size:1.25rem;white-space:nowrap}
+.logo i{width:34px;height:34px;border:1px solid var(--gold);border-radius:10px;display:grid;place-items:center;font-style:normal;color:var(--gold);font-size:.9rem}
+.hd nav{display:flex;gap:26px;font-size:.92rem}
+.hd nav a{text-decoration:none;color:var(--mute);transition:color .2s}.hd nav a:hover{color:var(--ink)}
+.hd .r{display:flex;align-items:center;gap:16px}
+.hd .tel{text-decoration:none;font-weight:600;font-size:.95rem;white-space:nowrap}
+/* сборка дома */
+.asm{height:420vh;position:relative}
+.asm .stick{position:sticky;top:0;height:100vh;overflow:hidden;background:radial-gradient(120% 90% at 70% 30%,#1B2433 0%,#0C0E12 70%)}
+.asm canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.asm .fallback{position:absolute;inset:0}
+.asm .ov{position:absolute;left:0;right:0;top:0;bottom:0;pointer-events:none;background:linear-gradient(90deg,rgba(12,14,18,.82) 0%,rgba(12,14,18,.45) 38%,rgba(12,14,18,0) 62%)}
+.asm .ov .wr{height:100%;display:flex;flex-direction:column;justify-content:center;padding-top:60px}
+.asm h1{font-size:clamp(2.4rem,5.6vw,5rem);max-width:12ch;margin:18px 0 20px;text-shadow:0 4px 30px rgba(0,0,0,.5)}
+.asm h1 em{font-style:normal;color:var(--gold)}
+.asm p.lead{max-width:40ch;color:#C9CCD3;font-size:1.08rem;margin:0 0 28px;text-shadow:0 2px 14px rgba(0,0,0,.6)}
+.asm .btns{display:flex;gap:12px;flex-wrap:wrap;pointer-events:auto}
+.steps{position:absolute;right:24px;top:50%;transform:translateY(-50%);display:grid;gap:4px;pointer-events:none}
+.steps li{list-style:none;display:flex;align-items:center;gap:12px;justify-content:flex-end;color:#5E6470;font-size:.9rem;font-weight:600;transition:color .3s}
+.steps li b{width:10px;height:10px;border-radius:50%;border:1px solid currentColor;transition:.3s}
+.steps li.on{color:var(--ink)}.steps li.on b{background:var(--gold);border-color:var(--gold);box-shadow:0 0 0 5px rgba(212,175,106,.18)}
+.steps li.done{color:#9BA0AA}.steps li.done b{background:#9BA0AA;border-color:#9BA0AA}
+.prog{position:absolute;left:24px;right:24px;bottom:30px;display:flex;align-items:center;gap:16px;font-size:.82rem;color:var(--mute)}
+.prog .bar{flex:1;height:2px;background:#2A303B;border-radius:2px;overflow:hidden}
+.prog .bar i{display:block;height:100%;width:0;background:var(--gold)}
+.scrollhint{display:flex;align-items:center;gap:8px}
+.scrollhint:before{content:"";width:16px;height:26px;border:1.5px solid currentColor;border-radius:10px;background:radial-gradient(circle at 50% 30%,currentColor 2px,transparent 3px);animation:sh 1.6s infinite}
+@keyframes sh{50%{background-position:0 6px}}
+/* общие секции */
+section{padding:120px 0;scroll-margin-top:40px}
+.sh{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;margin-bottom:46px;flex-wrap:wrap}
+.sh h2{font-size:clamp(2.1rem,4.4vw,3.6rem);margin-top:14px;max-width:16ch}
+.sh p{max-width:44ch;color:var(--mute);margin:0}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.stats div{padding:34px 24px;border-right:1px solid var(--line)}.stats div:last-child{border:0}
+.stats b{display:block;font-family:Prata,serif;font-size:2.6rem;color:var(--gold);font-weight:400;line-height:1}
+.stats span{color:var(--mute);font-size:.92rem}
+/* конфигуратор */
+.cfg{display:grid;grid-template-columns:1.35fr 1fr;gap:0;background:var(--card);border:1px solid var(--line);border-radius:26px;overflow:hidden}
+.view{position:relative;min-height:620px;background:linear-gradient(180deg,#CFE0EE 0%,#EEF3F7 70%);transition:background .6s;cursor:grab;touch-action:pan-y}
+.view.night{background:linear-gradient(180deg,#0B1322 0%,#1B2840 80%)}
+.view:active{cursor:grabbing}
+.view canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.view .fallback{position:absolute;inset:0}
+.tb{position:absolute;left:16px;top:16px;display:flex;gap:8px;flex-wrap:wrap;z-index:2}
+.tb button{border:0;background:rgba(12,14,18,.78);backdrop-filter:blur(8px);color:#EEE;border-radius:999px;padding:9px 14px;font-size:.84rem;font-weight:600;display:flex;align-items:center;gap:6px;transition:.2s}
+.tb button.on{background:var(--gold);color:#15110A}
+.view .hint{position:absolute;left:16px;bottom:14px;font-size:.8rem;color:#3E4652;background:rgba(255,255,255,.7);padding:6px 12px;border-radius:999px;z-index:2;transition:.3s}
+.view.night .hint{color:#C9CCD3;background:rgba(0,0,0,.45)}
+.view .tag3d{position:absolute;right:16px;top:16px;background:rgba(12,14,18,.78);color:var(--gold);border-radius:10px;padding:8px 12px;font-size:.8rem;font-weight:700;z-index:2;line-height:1.3;text-align:right}
+.view .tag3d small{display:block;color:#C9CCD3;font-weight:500}
+.panel{padding:30px;display:flex;flex-direction:column;gap:18px;max-height:none}
+.grp h4{margin:0 0 10px;font-size:.84rem;color:var(--mute);font-weight:600;display:flex;justify-content:space-between}
+.grp h4 b{color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips label{cursor:pointer}
+.chips input{position:absolute;opacity:0;pointer-events:none}
+.chips span{display:inline-block;padding:9px 14px;border-radius:12px;border:1px solid #333947;font-size:.88rem;font-weight:600;transition:.15s;color:#C9CCD3}
+.chips input:checked+span{border-color:var(--gold);color:var(--gold);background:rgba(212,175,106,.08)}
+.chips input:focus-visible+span{outline:2px solid var(--gold)}
+.sw{display:flex;gap:10px}
+.sw label{cursor:pointer}
+.sw input{position:absolute;opacity:0;pointer-events:none}
+.sw span{display:block;width:34px;height:34px;border-radius:50%;border:2px solid transparent;box-shadow:inset 0 0 0 2px var(--card);transition:.15s}
+.sw input:checked+span{border-color:var(--gold)}
+.sw input:focus-visible+span{outline:2px solid var(--gold)}
+input[type=range]{width:100%;accent-color:var(--gold)}
+.tgl{display:flex;gap:10px;flex-wrap:wrap}
+.tgl label{display:flex;align-items:center;gap:10px;border:1px solid #333947;border-radius:12px;padding:9px 14px;cursor:pointer;font-size:.88rem;font-weight:600;color:#C9CCD3;flex:1;min-width:150px}
+.tgl input{accent-color:var(--gold);width:17px;height:17px}
+.tgl small{margin-left:auto;color:var(--mute);font-weight:500}
+.sum{border-top:1px solid var(--line);padding-top:18px;display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap}
+.sum small{display:block;color:var(--mute);font-size:.82rem}
+.sum b{font-family:Prata,serif;font-weight:400;font-size:2.3rem;line-height:1;color:var(--gold)}
+.sum .wk{text-align:right}
+.sum .wk b{font-size:1.5rem;color:var(--ink)}
+details.smeta{border:1px solid var(--line);border-radius:14px;padding:0 16px;background:var(--bg2)}
+details.smeta summary{cursor:pointer;padding:14px 0;font-weight:700;font-size:.92rem;list-style:none;display:flex;justify-content:space-between}
+details.smeta summary::-webkit-details-marker{display:none}
+details.smeta summary:after{content:"+";color:var(--gold)}
+details.smeta[open] summary:after{content:"−"}
+.smeta table{width:100%;border-collapse:collapse;font-size:.88rem;margin-bottom:12px}
+.smeta td{padding:7px 0;border-top:1px solid var(--line);color:#C9CCD3}
+.smeta td:last-child{text-align:right;color:var(--ink);font-weight:600;white-space:nowrap}
+.smeta tr.gift td:last-child{color:var(--ok)}
+.acts{display:flex;gap:10px;flex-wrap:wrap}
+.acts .btn{flex:1}
+/* проекты */
+.strip{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(270px,1fr);gap:18px;overflow-x:auto;padding-bottom:14px;scroll-snap-type:x mandatory}
+.strip::-webkit-scrollbar{height:6px}.strip::-webkit-scrollbar-thumb{background:#2E3440;border-radius:6px}
+.pj{scroll-snap-align:start;background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column}
+.pj .im{aspect-ratio:4/3;overflow:hidden}
+.pj .im .ph{transition:transform .8s}
+.pj:hover .im .ph{transform:scale(1.05)}
+.pj .bd{padding:16px 18px 18px;display:flex;flex-direction:column;gap:8px;flex:1}
+.pj h3{font-size:1.4rem}
+.pj .sub{color:var(--mute);font-size:.88rem}
+.pj .ft{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:10px;border-top:1px solid var(--line);gap:10px}
+.pj .ft b{font-weight:700;white-space:nowrap;font-size:.95rem}.pj .ft .btn{padding:9px 14px;font-size:.82rem}
+/* планировка */
+.plan{display:grid;grid-template-columns:1.4fr .8fr;gap:24px;align-items:start}
+.plan .box{background:#F3EFE8;border-radius:24px;padding:24px;position:relative}
+.plan svg{width:100%;height:auto;display:block}
+.plan svg .rm{fill:#FFFDF9;stroke:#2B2A28;stroke-width:3;transition:fill .2s;cursor:pointer}
+.plan svg .rm:hover,.plan svg .rm.on{fill:#F1E2C3}
+.plan svg text{font-family:Manrope,sans-serif;fill:#2B2A28;pointer-events:none}
+.plan .fl{position:absolute;top:18px;right:18px;display:flex;gap:6px}
+.plan .fl button{border:1px solid #CFC6B6;background:#fff;color:#2B2A28;border-radius:999px;padding:7px 14px;font-size:.85rem;font-weight:700}
+.plan .fl button.on{background:#2B2A28;color:#fff;border-color:#2B2A28}
+.info{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:28px}
+.info h3{font-size:2rem;margin:10px 0 6px}
+.info .big{font-family:Prata,serif;font-size:3rem;color:var(--gold);line-height:1}
+.info ul{list-style:none;padding:0;margin:18px 0 0;display:grid;gap:6px}
+.info li{display:flex;justify-content:space-between;color:#C9CCD3;font-size:.92rem;border-top:1px solid var(--line);padding-top:6px;cursor:pointer}
+.info li.on{color:var(--gold)}
+/* график */
+.gantt{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:28px;overflow-x:auto}
+.gh,.gr{display:grid;grid-template-columns:220px 1fr;align-items:center;gap:16px;min-width:720px}
+.gh{color:var(--mute);font-size:.78rem;margin-bottom:10px}
+.gh .wk{display:grid;grid-template-columns:repeat(24,1fr)}
+.gh .wk span{border-left:1px solid var(--line);padding-left:4px}
+.gr{padding:9px 0;border-top:1px solid var(--line)}
+.gr .nm{font-weight:600;font-size:.92rem}.gr .nm small{display:block;color:var(--mute);font-weight:500}
+.gr .tr{position:relative;height:26px;background:repeating-linear-gradient(90deg,transparent 0,transparent calc(100%/24 - 1px),var(--line) calc(100%/24 - 1px),var(--line) calc(100%/24))}
+.gr .tr i{position:absolute;top:3px;bottom:3px;border-radius:7px;background:linear-gradient(90deg,var(--gold2),var(--gold));width:0;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+.pay{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:22px}
+.pay div{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.pay b{font-family:Prata,serif;font-weight:400;font-size:2rem;color:var(--gold);display:block;line-height:1}
+.pay span{color:var(--mute);font-size:.86rem}
+/* кабинет */
+.lk{display:grid;grid-template-columns:260px 1fr;background:var(--card);border:1px solid var(--line);border-radius:26px;overflow:hidden;min-height:520px}
+.lk aside{background:var(--bg2);border-right:1px solid var(--line);padding:24px;display:flex;flex-direction:column;gap:6px}
+.lk aside .who{display:flex;gap:12px;align-items:center;margin-bottom:18px}
+.lk aside .who i{width:44px;height:44px;border-radius:50%;background:var(--gold);color:#15110A;display:grid;place-items:center;font-style:normal;font-weight:800}
+.lk aside .who small{display:block;color:var(--mute)}
+.lk aside button{border:0;background:transparent;text-align:left;padding:11px 14px;border-radius:12px;font-weight:600;color:#C9CCD3;display:flex;gap:10px;align-items:center}
+.lk aside button.on{background:var(--card2);color:var(--gold)}
+.lk aside button em{font-style:normal;margin-left:auto;background:#E5484D;color:#fff;border-radius:999px;font-size:.72rem;padding:1px 7px}
+.lk main{padding:28px;min-width:0}
+.lk .top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-end;margin-bottom:22px}
+.lk .top h3{font-size:1.7rem}
+.lk .top small{color:var(--mute)}
+.ring{display:flex;align-items:center;gap:14px}
+.ring svg{width:64px;height:64px;transform:rotate(-90deg)}
+.ring b{font-family:Prata,serif;font-weight:400;font-size:1.8rem}
+.tab{display:none}.tab.on{display:block;animation:fd .4s}
+@keyframes fd{from{opacity:0;transform:translateY(8px)}}
+.st{display:grid;gap:10px}
+.st div{display:grid;grid-template-columns:28px 1fr auto;gap:14px;align-items:center;padding:12px 16px;border:1px solid var(--line);border-radius:14px}
+.st div i{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:.8rem;border:1.5px solid #3A404C;color:var(--mute)}
+.st div.d i{background:var(--ok);border-color:var(--ok);color:#0C0E12}
+.st div.n{border-color:var(--gold)}.st div.n i{border-color:var(--gold);color:var(--gold)}
+.st div small{color:var(--mute)}
+.ph-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.ph-grid figure{margin:0;border-radius:14px;overflow:hidden;position:relative;aspect-ratio:4/3}
+.ph-grid figcaption{position:absolute;left:0;right:0;bottom:0;padding:24px 12px 10px;background:linear-gradient(transparent,rgba(0,0,0,.75));font-size:.82rem;font-weight:600}
+.docs{display:grid;gap:8px}
+.docs a{display:flex;align-items:center;gap:14px;padding:13px 16px;border:1px solid var(--line);border-radius:14px;text-decoration:none;transition:.2s}
+.docs a:hover{border-color:var(--gold)}
+.docs a i{font-style:normal;background:#2A1E1E;color:#F08A7E;font-size:.7rem;font-weight:800;border-radius:6px;padding:4px 6px}
+.docs a small{margin-left:auto;color:var(--mute)}
+.cam{position:relative;border-radius:16px;overflow:hidden;aspect-ratio:16/9;max-height:420px}
+.cam .live{position:absolute;left:14px;top:14px;background:#E5484D;color:#fff;font-weight:800;font-size:.75rem;padding:4px 10px;border-radius:6px;display:flex;align-items:center;gap:6px;z-index:2}
+.cam .live:before{content:"";width:7px;height:7px;border-radius:50%;background:#fff;animation:bl 1s infinite}
+@keyframes bl{50%{opacity:.2}}
+.cam .ts{position:absolute;right:14px;bottom:12px;font:600 .82rem ui-monospace,monospace;background:rgba(0,0,0,.55);padding:4px 8px;border-radius:6px;z-index:2}
+.chat{display:flex;flex-direction:column;gap:10px;max-height:340px;overflow:auto;padding-right:4px}
+.msg{max-width:78%;padding:10px 14px;border-radius:14px;background:var(--card2);font-size:.92rem}
+.msg small{display:block;color:var(--mute);font-size:.74rem;margin-bottom:2px}
+.msg.me{align-self:flex-end;background:rgba(212,175,106,.14)}
+.chatf{display:flex;gap:8px;margin-top:12px}
+.chatf input{flex:1;padding:12px 14px;border-radius:12px;border:1px solid #333947;background:var(--bg2);color:var(--ink);font:inherit}
+/* материалы */
+.cmp{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:24px}
+.cmp table{width:100%;border-collapse:collapse;min-width:760px}
+.cmp th,.cmp td{padding:16px 18px;border-bottom:1px solid var(--line);text-align:left;font-size:.92rem}
+.cmp th{font-family:Prata,serif;font-weight:400;font-size:1.2rem;cursor:pointer;transition:color .2s}
+.cmp td:first-child{color:var(--mute)}
+.cmp .on{background:rgba(212,175,106,.07);color:var(--gold)}
+.cmp td.on{color:var(--ink)}
+.dots{letter-spacing:3px;color:var(--gold)}
+.dots s{color:#3A404C;text-decoration:none}
+/* встреча */
+.meet{display:grid;grid-template-columns:1.1fr .9fr;gap:24px}
+.mf{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:30px}
+.mf label.t{display:block;font-size:.84rem;color:var(--mute);margin:16px 0 8px}
+.mf input,.mf select{width:100%;padding:14px;border-radius:12px;border:1px solid #333947;background:var(--bg2);color:var(--ink);font:inherit}
+.mf input:focus,.mf select:focus{outline:2px solid var(--gold);border-color:transparent}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.slots{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.slots button{border:1px solid #333947;background:var(--bg2);border-radius:10px;padding:10px 4px;font-size:.88rem;font-weight:600}
+.slots button.on{background:var(--gold);color:#15110A;border-color:var(--gold)}
+.slots button:disabled{opacity:.3;text-decoration:line-through;cursor:not-allowed}
+.err{color:#F08A7E;font-size:.86rem;min-height:1.3em;margin-top:8px}
+.okbox{text-align:center;padding:30px 10px}
+.okbox .c{width:72px;height:72px;border-radius:50%;background:var(--gold);color:#15110A;display:grid;place-items:center;font-size:2rem;margin:0 auto 18px}
+.ct{background:var(--card);border:1px solid var(--line);border-radius:24px;overflow:hidden;display:flex;flex-direction:column}
+.ct iframe{flex:1;min-height:300px;border:0;width:100%;filter:grayscale(.85) invert(.9) hue-rotate(180deg) contrast(.9)}
+.ct dl{display:grid;grid-template-columns:auto 1fr;gap:8px 22px;margin:0;padding:24px}.ct dt{color:var(--mute)}.ct dd{margin:0}
+footer.f{border-top:1px solid var(--line);padding:30px 0 110px;color:var(--mute);font-size:.88rem}
+footer.f .wr{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.float{position:fixed;right:16px;bottom:16px;z-index:40}
+.float a{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:#25D366;color:#fff;text-decoration:none;font-size:1.4rem;box-shadow:0 10px 24px rgba(0,0,0,.35)}
+.rv{opacity:0;transform:translateY(34px);transition:opacity .9s,transform .9s cubic-bezier(.2,.8,.2,1)}.rv.in{opacity:1;transform:none}
+#print{display:none}
+@media print{body{background:#fff;color:#000}body>*:not(#print){display:none!important}#print{display:block;font:13px/1.5 Arial,sans-serif;color:#000;padding:10px}#print h1{font:700 22px Arial;margin:0 0 4px}#print table{width:100%;border-collapse:collapse;margin-top:14px}#print td,#print th{border-bottom:1px solid #ccc;padding:7px 4px;text-align:left}#print td:last-child,#print th:last-child{text-align:right}#print .tot td{font-weight:700;font-size:15px;border-top:2px solid #000}}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}}
+@media(max-width:1100px){.hd nav{display:none}.cfg{grid-template-columns:1fr}.view{min-height:460px}.plan,.meet{grid-template-columns:1fr}.pay{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:760px){.view .tag3d{display:none}.asm .ov{background:linear-gradient(180deg,rgba(12,14,18,.85) 0%,rgba(12,14,18,.6) 50%,rgba(12,14,18,0) 75%)}.asm .ov .wr{justify-content:flex-start;padding-top:100px}section{padding:84px 0}.stats{grid-template-columns:1fr 1fr}.stats div:nth-child(2){border-right:0}.stats div{border-bottom:1px solid var(--line)}.steps{display:none}.view{min-height:380px}.panel{padding:22px}.lk{grid-template-columns:1fr}.lk aside{flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line);padding:12px}.lk aside .who{display:none}.lk aside button{white-space:nowrap}.ph-grid{grid-template-columns:1fr 1fr}.pay{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}.slots{grid-template-columns:repeat(3,1fr)}.hd .tel{display:none}.logo{font-size:1.05rem}.hd .btn{padding:10px 16px;font-size:.85rem}.asm .btns .btn{flex:1}.asm h1{font-size:2.5rem}}
+@media(max-width:420px){.hd .btn{display:none}}
+</style>
+</head>
+<body><a href="../index.html" class="tarify-back" aria-label="Вернуться ко всем тарифам" style="position:fixed;left:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:2147483000;display:inline-flex;align-items:center;gap:6px;padding:11px 16px;border-radius:999px;background:rgba(20,20,20,.82);color:#fff;font:600 14px/1 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;text-decoration:none;box-shadow:0 8px 22px -6px rgba(0,0,0,.45);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)">← Все тарифы</a>
+<header class="hd" id="hd"><div class="wr">
+  <a class="logo" href="#top"><i>◆</i>Строй дом в РОССИИ</a>
+  <nav><a href="#config">3D-конфигуратор</a><a href="#plan">Планировка</a><a href="#time">Сроки</a><a href="#lk">Личный кабинет</a><a href="#meet">Встреча</a></nav>
+  <div class="r"><a class="tel" href="tel:+77777777777">+7-777-777-77-77</a><a class="btn sm" href="#config">Собрать дом в 3D</a></div>
+</div></header>
+
+<!-- 1. Дом собирается при прокрутке -->
+<section class="asm" id="top" style="padding:0">
+  <div class="stick">
+    <div class="fallback" id="asmFb"></div>
+    <canvas id="asmCv" aria-label="3D-модель дома, собирается при прокрутке"></canvas>
+    <div class="ov"><div class="wr">
+      <span class="cap">Строительство домов под ключ · с 2014 года</span>
+      <h1>Ваш дом — <em>в 3D</em> ещё до начала стройки</h1>
+      <p class="lead">Прокрутите вниз — дом соберётся у вас на глазах: от фундамента до кровли. Потом настройте его под себя и получите смету за минуту.</p>
+      <div class="btns"><a class="btn" href="#config">Собрать свой дом</a><a class="btn line" href="#lk">Как следить за стройкой</a></div>
+    </div></div>
+    <ul class="steps" id="steps">
+      <li><span>Фундамент</span><b></b></li><li><span>Стены 1 этажа</span><b></b></li><li><span>Второй этаж</span><b></b></li><li><span>Кровля</span><b></b></li><li><span>Гараж и терраса</span><b></b></li><li><span>Новоселье</span><b></b></li>
+    </ul>
+    <div class="prog"><span class="scrollhint" id="sh">Прокрутите</span><div class="bar"><i id="pbar"></i></div><span id="ppct">0%</span></div>
+  </div>
+</section>
+
+<div class="wr"><div class="stats rv">
+  <div><b>140+</b><span>домов сдано под ключ</span></div>
+  <div><b>0 ₽</b><span>доплат сверх сметы</span></div>
+  <div><b>24/7</b><span>камера на объекте</span></div>
+  <div><b>5 лет</b><span>гарантии на конструктив</span></div>
+</div></div>
+
+<!-- 2. Конфигуратор -->
+<section id="config"><div class="wr">
+  <div class="sh rv"><div><div class="cap">3D-конфигуратор</div><h2>Соберите дом — цена посчитается сразу</h2></div><p>Меняйте материал, этажность, кровлю и опции. Вращайте модель, смотрите дом днём и вечером, разберите его по слоям. Смету можно скачать в PDF.</p></div>
+  <div class="cfg rv">
+    <div class="view" id="view">
+      <div class="fallback" id="cfgFb"></div>
+      <canvas id="cfgCv" aria-label="3D-модель вашего дома"></canvas>
+      <div class="tb">
+        <button type="button" id="bNight">🌙 Вечер</button>
+        <button type="button" id="bExpl">▤ По слоям</button>
+        <button type="button" id="bRot" class="on">⟳ Вращение</button>
+      </div>
+      <div class="tag3d" id="tag3d"></div>
+      <div class="hint" id="hint">Потяните, чтобы повернуть дом</div>
+    </div>
+    <div class="panel" id="panel">
+      <div class="grp"><h4>Материал стен</h4><div class="chips" id="cMat"></div></div>
+      <div class="grp"><h4>Этажность</h4><div class="chips" id="cFl">
+        <label><input type="radio" name="fl" value="1"><span>1 этаж</span></label>
+        <label><input type="radio" name="fl" value="2" checked><span>2 этажа</span></label></div></div>
+      <div class="grp"><h4>Площадь <b id="aV">150 м²</b></h4><input type="range" id="cA" min="70" max="320" step="5" value="150" aria-label="Площадь дома"></div>
+      <div class="grp"><h4>Кровля</h4><div style="display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:center"><div class="chips" id="cRoof">
+        <label><input type="radio" name="rf" value="gable" checked><span>Двускатная</span></label>
+        <label><input type="radio" name="rf" value="flat"><span>Плоская</span></label></div>
+        <div class="sw" id="cRc"></div></div></div>
+      <div class="grp"><h4>Опции</h4><div class="tgl">
+        <label><input type="checkbox" id="oG"> Гараж <small>+890 тыс.</small></label>
+        <label><input type="checkbox" id="oT" checked> Терраса <small>+380 тыс.</small></label></div></div>
+      <div class="grp"><h4>Комплектация</h4><div class="chips" id="cK"></div></div>
+      <div class="sum"><div><small>Стоимость под ваш выбор</small><b id="tot">—</b></div><div class="wk"><small>Срок стройки</small><b id="wks">—</b></div></div>
+      <details class="smeta"><summary>Подробная смета</summary><table id="smeta"></table></details>
+      <div class="acts"><button class="btn" type="button" id="bPdf">Скачать смету PDF</button><a class="btn line" id="bWa" href="#" target="_blank" rel="noopener">Обсудить в WhatsApp</a></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 3. Готовые проекты -->
+<section id="proj" style="padding-top:0"><div class="wr">
+  <div class="sh rv"><div><div class="cap">Готовые проекты</div><h2>Возьмите проект за основу</h2></div><p>Нажмите «Открыть в 3D» — параметры проекта перенесутся в конфигуратор, дальше настройте под себя.</p></div>
+  <div class="strip rv" id="strip"></div>
+</div></section>
+
+<!-- 4. Планировка -->
+<section id="plan" style="padding-top:0"><div class="wr">
+  <div class="sh rv"><div><div class="cap">Интерактивная планировка</div><h2>Каждая комната — в метрах</h2></div><p>Наведите на комнату или выберите её в списке. Переключайте этажи. Планировку меняем под вашу семью бесплатно.</p></div>
+  <div class="plan rv">
+    <div class="box"><div class="fl"><button type="button" class="on" data-f="0">1 этаж</button><button type="button" data-f="1">2 этаж</button></div><div id="planSvg"></div></div>
+    <div class="info"><div class="cap" id="pCap">1 этаж</div><h3 id="pName">Гостиная-кухня</h3><div class="big" id="pArea">42 м²</div><ul id="pList"></ul></div>
+  </div>
+</div></section>
+
+<!-- 5. Сроки и оплата -->
+<section id="time" style="padding-top:0"><div class="wr">
+  <div class="sh rv"><div><div class="cap">График стройки</div><h2>23 недели — от проекта до ключей</h2></div><p>График фиксируется в договоре. За каждую неделю просрочки по нашей вине — неустойка 0,1% от стоимости этапа.</p></div>
+  <div class="gantt rv" id="gantt"></div>
+  <div class="pay rv">
+    <div><b>10%</b><span>при подписании договора</span></div>
+    <div><b>20%</b><span>после фундамента</span></div>
+    <div><b>30%</b><span>после коробки дома</span></div>
+    <div><b>20%</b><span>после кровли и окон</span></div>
+    <div><b>20%</b><span>после отделки и сдачи</span></div>
+  </div>
+</div></section>
+
+<!-- 6. Личный кабинет -->
+<section id="lk" style="padding-top:0"><div class="wr">
+  <div class="sh rv"><div><div class="cap">Личный кабинет клиента</div><h2>Стройка у вас в телефоне</h2></div><p>Этапы, фото каждый день, документы, камера на участке и чат с прорабом — в одном месте. Ниже демо-кабинет, можно всё нажимать.</p></div>
+  <div class="lk rv">
+    <aside>
+      <div class="who"><i>АК</i><div>Андрей К.<small>Договор СД-2026-0148</small></div></div>
+      <button type="button" class="on" data-t="t1">📋 Этапы</button>
+      <button type="button" data-t="t2">📸 Фотоотчёт</button>
+      <button type="button" data-t="t3">📄 Документы</button>
+      <button type="button" data-t="t4">🎥 Камера</button>
+      <button type="button" data-t="t5">💬 Прораб <em id="unread">2</em></button>
+    </aside>
+    <main>
+      <div class="top"><div><small>Проект «Берёзка» · 175 м² · газоблок</small><h3>Копейск, ул. Ваш адрес</h3></div>
+        <div class="ring"><svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15.9" fill="none" stroke="#272C36" stroke-width="3"/><circle id="ringC" cx="18" cy="18" r="15.9" fill="none" stroke="#D4AF6A" stroke-width="3" stroke-dasharray="0 100" stroke-linecap="round"/></svg><div><b>64%</b><br><small style="color:var(--mute)">готовности</small></div></div></div>
+      <div class="tab on" id="t1"><div class="st">
+        <div class="d"><i>✓</i><span>Проект и смета<br><small>Подписано 12 мая</small></span><small>3 нед.</small></div>
+        <div class="d"><i>✓</i><span>Фундамент — монолитная плита<br><small>Принято 2 июня · акт №1</small></span><small>3 нед.</small></div>
+        <div class="d"><i>✓</i><span>Стены и перекрытия<br><small>Принято 14 июля · акт №2</small></span><small>6 нед.</small></div>
+        <div class="n"><i>4</i><span>Кровля<br><small>Идёт монтаж металлочерепицы · 70%</small></span><small>сейчас</small></div>
+        <div><i>5</i><span>Окна и инженерные сети<br><small>Старт 28 августа</small></span><small>6 нед.</small></div>
+        <div><i>6</i><span>Отделка и благоустройство<br><small>Старт 9 октября</small></span><small>8 нед.</small></div>
+      </div></div>
+      <div class="tab" id="t2"><div class="ph-grid" id="phGrid"></div></div>
+      <div class="tab" id="t3"><div class="docs">
+        <a href="#" onclick="return false"><i>PDF</i>Договор подряда № СД-2026-0148<small>12 мая</small></a>
+        <a href="#" onclick="return false"><i>PDF</i>Смета «Берёзка», газоблок, под ключ<small>12 мая</small></a>
+        <a href="#" onclick="return false"><i>PDF</i>Акт приёмки №1 — фундамент<small>2 июня</small></a>
+        <a href="#" onclick="return false"><i>PDF</i>Акт приёмки №2 — стены и перекрытия<small>14 июля</small></a>
+        <a href="#" onclick="return false"><i>PDF</i>Исполнительная схема фундамента<small>2 июня</small></a>
+        <a href="#" onclick="return false"><i>PDF</i>Сертификаты на материалы<small>обновлено</small></a>
+      </div></div>
+      <div class="tab" id="t4"><div class="cam" id="cam"><span class="live">LIVE · Камера 1</span><span class="ts" id="camTs"></span></div></div>
+      <div class="tab" id="t5"><div class="chat" id="chat">
+        <div class="msg"><small>Сергей, прораб · 09:12</small>Доброе утро! Сегодня заканчиваем южный скат кровли, фото пришлю к обеду.</div>
+        <div class="msg me"><small>Вы · 09:20</small>Отлично. А водостоки когда?</div>
+        <div class="msg"><small>Сергей, прораб · 09:24</small>Водостоки — в четверг, сразу после конька. Цвет — графит, как в смете.</div>
+      </div><form class="chatf" id="chatF"><input id="chatI" placeholder="Написать прорабу…" aria-label="Сообщение прорабу"><button class="btn sm" type="submit">Отправить</button></form></div>
+    </main>
+  </div>
+</div></section>
+
+<!-- 7. Материалы -->
+<section id="mat" style="padding-top:0"><div class="wr">
+  <div class="sh rv"><div><div class="cap">Сравнение материалов</div><h2>Из чего строить — честно</h2></div><p>Нажмите на материал, чтобы выделить колонку, и отправьте его в конфигуратор.</p></div>
+  <div class="cmp rv"><table id="cmp"></table></div>
+</div></section>
+
+<!-- 8. Встреча -->
+<section id="meet" style="padding-top:0"><div class="wr">
+  <div class="sh rv"><div><div class="cap">Встреча с архитектором</div><h2>Обсудим ваш дом лично</h2></div><p>Выберите формат и удобное время. Встреча бесплатная — архитектор подготовит 3D-модель под ваш участок.</p></div>
+  <div class="meet">
+    <form class="mf rv" id="meetF" novalidate>
+      <label class="t">Формат</label><div class="chips" id="mFmt">
+        <label><input type="radio" name="fm" value="В шоуруме" checked><span>🏢 В шоуруме</span></label>
+        <label><input type="radio" name="fm" value="Видеозвонок"><span>💻 Видеозвонок</span></label>
+        <label><input type="radio" name="fm" value="Выезд на участок"><span>📍 Выезд на участок</span></label></div>
+      <div class="two"><div><label class="t" for="mN">Имя</label><input id="mN" autocomplete="name" placeholder="Как к вам обращаться"></div><div><label class="t" for="mT">Телефон</label><input id="mT" type="tel" autocomplete="tel" placeholder="+7"></div></div>
+      <label class="t" for="mD">Дата</label><select id="mD"></select>
+      <label class="t">Время</label><div class="slots" id="mS"></div>
+      <button class="btn" type="submit" style="width:100%;margin-top:22px">Записаться на встречу</button>
+      <div class="err" id="mErr"></div>
+    </form>
+    <div class="ct rv">
+      <iframe title="Карта: Челябинск" src="https://yandex.ru/map-widget/v1/?ll=61.402554%2C55.159897&z=11" loading="lazy"></iframe>
+      <dl><dt>Шоурум</dt><dd>г. Челябинск, Ваш адрес</dd><dt>Телефон</dt><dd><a href="tel:+77777777777">+7-777-777-77-77</a></dd><dt>Часы</dt><dd>Ежедневно 9:00–20:00</dd><dt>Почта</dt><dd>info@example.ru</dd></dl>
+    </div>
+  </div>
+</div></section>
+
+<footer class="f"><div class="wr"><span>© Строй дом в РОССИИ · Архитектура и строительство</span><span>Все данные на сайте — образец</span></div></footer>
+<div class="float"><a href="https://wa.me/77777777777" aria-label="WhatsApp" target="_blank" rel="noopener">💬</a></div>
+<div id="print"></div>
+
+<script src="three.min.js"></script>
+<script>/* Генератор иллюстраций домов (SVG) — заменяются на фото клиента */
+function houseSVG(o){
+  o=Object.assign({floors:1,attic:false,roof:'gable',wall:'#E9DCC8',roofc:'#5B3B32',trim:'#FFFFFF',garage:false,w:200,sky:'day',terrace:false,stage:'done',crane:false},o||{});
+  var W=400,H=300,G=246,cx=o.garage?185:200,fh=62,fl=o.floors,bh=fh*fl+8,bw=o.w,x0=cx-bw/2,top=G-bh;
+  var sky={day:['#CFE3F2','#F4F8FB'],dusk:['#F6C9A0','#FBEADB'],night:['#26344A','#46597A'],grey:['#D9DEE3','#F1F3F5']}[o.sky]||['#CFE3F2','#F4F8FB'];
+  var id='g'+Math.random().toString(36).slice(2,8);
+  var s='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" role="img">';
+  s+='<defs><linearGradient id="'+id+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+sky[0]+'"/><stop offset="1" stop-color="'+sky[1]+'"/></linearGradient></defs>';
+  s+='<rect width="'+W+'" height="'+H+'" fill="url(#'+id+')"/>';
+  if(o.sky==='night')s+='<circle cx="330" cy="50" r="16" fill="#F5EBC9"/>';else s+='<circle cx="335" cy="55" r="22" fill="#fff" opacity=".7"/>';
+  s+='<path d="M0 '+(G-30)+' Q80 '+(G-60)+' 160 '+(G-34)+' T400 '+(G-40)+' V'+H+' H0Z" fill="#B9CDB5" opacity=".55"/>';
+  s+='<rect y="'+G+'" width="'+W+'" height="'+(H-G)+'" fill="#9DB78F"/>';
+  s+='<rect y="'+G+'" width="'+W+'" height="5" fill="#86A178"/>';
+  // деревья
+  [[34,0.9],[372,1.1],[60,0.7]].forEach(function(t){var k=t[1];s+='<rect x="'+(t[0]-2)+'" y="'+(G-34*k)+'" width="4" height="'+34*k+'" fill="#6B5444"/><circle cx="'+t[0]+'" cy="'+(G-44*k)+'" r="'+20*k+'" fill="#6E9A62"/><circle cx="'+(t[0]+9*k)+'" cy="'+(G-36*k)+'" r="'+13*k+'" fill="#5E8A54"/>';});
+  if(o.crane){s+='<g stroke="#E3A02B" stroke-width="3" fill="none"><path d="M318 '+G+' V40 M318 52 H140 M318 52 H362 M318 40 L250 52 M318 40 L362 52"/></g><rect x="352" y="52" width="14" height="14" fill="#555"/><path d="M190 52 V'+(top-20)+'" stroke="#444" stroke-width="1.5"/><rect x="180" y="'+(top-20)+'" width="20" height="8" fill="#7C8A96"/>';}
+  // фундамент
+  s+='<rect x="'+(x0-6)+'" y="'+(G-10)+'" width="'+(bw+12+(o.garage?80:0))+'" height="12" fill="#8E9196"/>';
+  if(o.stage==='foundation'){s+='<g stroke="#5C6066" stroke-width="2">';for(var r=x0;r<x0+bw;r+=14)s+='<line x1="'+r+'" y1="'+(G-10)+'" x2="'+r+'" y2="'+(G-26)+'"/>';s+='</g></svg>';return s;}
+  // гараж
+  if(o.garage){var gx=x0+bw-2,gw=82,gh=fh+4;s+='<rect x="'+gx+'" y="'+(G-10-gh)+'" width="'+gw+'" height="'+gh+'" fill="'+o.wall+'" stroke="rgba(0,0,0,.12)"/><rect x="'+(gx-4)+'" y="'+(G-16-gh)+'" width="'+(gw+10)+'" height="8" fill="'+o.roofc+'"/>';s+='<rect x="'+(gx+12)+'" y="'+(G-10-gh+22)+'" width="'+(gw-24)+'" height="'+(gh-22)+'" fill="#D5D8DC"/>';for(var gl=0;gl<5;gl++)s+='<line x1="'+(gx+12)+'" x2="'+(gx+gw-12)+'" y1="'+(G-10-gh+30+gl*8)+'" y2="'+(G-10-gh+30+gl*8)+'" stroke="#B4B9BF"/>';}
+  // стены
+  s+='<rect x="'+x0+'" y="'+top+'" width="'+bw+'" height="'+(bh-10)+'" fill="'+o.wall+'"/>';
+  if(o.wall==='#B5553E'||o.wall==='#A44A36'){s+='<g stroke="rgba(0,0,0,.08)">';for(var by=top+6;by<G-10;by+=6)s+='<line x1="'+x0+'" x2="'+(x0+bw)+'" y1="'+by+'" y2="'+by+'"/>';s+='</g>';}
+  if(o.wall==='#C79A64'||o.wall==='#B98A57'){s+='<g stroke="rgba(80,50,20,.18)">';for(var ly=top+8;ly<G-10;ly+=8)s+='<line x1="'+x0+'" x2="'+(x0+bw)+'" y1="'+ly+'" y2="'+ly+'"/>';s+='</g>';}
+  if(fl>1)s+='<rect x="'+x0+'" y="'+(top+fh+2)+'" width="'+bw+'" height="5" fill="'+o.trim+'" opacity=".8"/>';
+  // окна
+  var n=Math.max(2,Math.round(bw/58));
+  for(var f=0;f<fl;f++){var wy=top+12+f*(fh+4);for(var i=0;i<n;i++){var wx=x0+(bw/(n))*i+(bw/n)/2-12;if(f===fl-1&&i===Math.floor(n/2)&&o.stage==='done'){continue;}
+    if(o.stage==='walls'){s+='<rect x="'+wx+'" y="'+wy+'" width="24" height="32" fill="#4B4F55"/>';continue;}
+    s+='<rect x="'+(wx-2)+'" y="'+(wy-2)+'" width="28" height="36" fill="'+o.trim+'"/><rect x="'+wx+'" y="'+wy+'" width="24" height="32" fill="'+(o.sky==='night'?'#F7D98A':'#8DB2CC')+'"/><path d="M'+(wx+12)+' '+wy+' V'+(wy+32)+' M'+wx+' '+(wy+14)+' H'+(wx+24)+'" stroke="'+o.trim+'" stroke-width="2"/>';}}
+  if(o.stage==='done'){var dx=x0+(bw/n)*Math.floor(n/2)+(bw/n)/2-13;s+='<rect x="'+dx+'" y="'+(G-10-46)+'" width="26" height="46" fill="#5A4436"/><circle cx="'+(dx+20)+'" cy="'+(G-34)+'" r="1.8" fill="#E8C77A"/><rect x="'+(dx-8)+'" y="'+(G-12)+'" width="42" height="4" fill="#9A9DA2"/>';}
+  if(o.terrace){s+='<rect x="'+(x0-46)+'" y="'+(G-16)+'" width="46" height="6" fill="#8B6A4E"/><g stroke="#8B6A4E" stroke-width="2">';for(var tx=x0-44;tx<x0;tx+=8)s+='<line x1="'+tx+'" y1="'+(G-16)+'" x2="'+tx+'" y2="'+(G-34)+'"/>';s+='<line x1="'+(x0-46)+'" x2="'+x0+'" y1="'+(G-34)+'" y2="'+(G-34)+'"/></g>';}
+  if(o.stage==='walls'){s+='<g stroke="#C9A35B" stroke-width="2">';for(var sx=x0-10;sx<=x0+bw+10;sx+=34)s+='<line x1="'+sx+'" y1="'+(G-10)+'" x2="'+sx+'" y2="'+(top-14)+'"/>';for(var sy=G-30;sy>top-14;sy-=30)s+='<line x1="'+(x0-10)+'" x2="'+(x0+bw+10)+'" y1="'+sy+'" y2="'+sy+'"/>';s+='</g></svg>';return s;}
+  // крыша
+  var ov=14,rh=o.attic?78:56;
+  if(o.roof==='gable')s+='<path d="M'+(x0-ov)+' '+top+' L'+cx+' '+(top-rh)+' L'+(x0+bw+ov)+' '+top+'Z" fill="'+o.roofc+'"/><path d="M'+(x0+8)+' '+top+' L'+cx+' '+(top-rh+12)+' L'+(x0+bw-8)+' '+top+'Z" fill="'+o.wall+'" opacity="'+(o.attic?1:0)+'"/>';
+  else if(o.roof==='hip')s+='<path d="M'+(x0-ov)+' '+top+' L'+(x0+bw*0.25)+' '+(top-rh*0.8)+' L'+(x0+bw*0.75)+' '+(top-rh*0.8)+' L'+(x0+bw+ov)+' '+top+'Z" fill="'+o.roofc+'"/>';
+  else s+='<rect x="'+(x0-6)+'" y="'+(top-12)+'" width="'+(bw+12)+'" height="14" fill="'+o.roofc+'"/>';
+  if(o.attic&&o.roof==='gable'){var ay=top-rh+38;s+='<rect x="'+(cx-14)+'" y="'+ay+'" width="28" height="30" fill="'+o.trim+'"/><rect x="'+(cx-12)+'" y="'+(ay+2)+'" width="24" height="26" fill="'+(o.sky==='night'?'#F7D98A':'#8DB2CC')+'"/>';}
+  if(o.roof!=='flat')s+='<rect x="'+(x0+bw*0.7)+'" y="'+(top-rh*0.75)+'" width="14" height="'+rh*0.45+'" fill="#7E6A5E"/>';
+  s+='</svg>';return s;
+}
+
+/* Реальные фото (Unsplash, бесплатная лицензия). Если фото не загрузилось — показываем иллюстрацию */
+var HSREG=[];
+function photoURL(id,w){return 'https://images.unsplash.com/photo-'+id+'?w='+(w||900)+'&q=72&auto=format&fit=crop'}
+function pic(id,house,alt,w){var k=HSREG.push(house||{})-1;return '<img class="ph" src="'+photoURL(id,w)+'" srcset="'+photoURL(id,Math.round((w||900)/2))+' '+Math.round((w||900)/2)+'w, '+photoURL(id,w)+' '+(w||900)+'w, '+photoURL(id,Math.min(2400,(w||900)*1.6|0))+' '+Math.min(2400,(w||900)*1.6|0)+'w" sizes="(max-width:760px) 100vw, 50vw" alt="'+(alt||'').replace(/"/g,'&quot;')+'" loading="lazy" decoding="async" onerror="phFail(this,'+k+')">'}
+function phFail(im,k){var d=document.createElement('div');d.className='ph';d.innerHTML=houseSVG(HSREG[k]);im.replaceWith(d)}
+function fillMedia(el){var cfg=JSON.parse(el.getAttribute('data-house')||'{}');el.insertAdjacentHTML('afterbegin',el.dataset.photo?pic(el.dataset.photo,cfg,el.dataset.alt||el.getAttribute('aria-label')||'',+el.dataset.w||1000):houseSVG(cfg))}
+function projMedia(p,w){return p.photo?pic(p.photo,p.house,'Проект дома '+p.name+', '+p.area+' м²',w||700):houseSVG(p.house)}
+document.head.insertAdjacentHTML('beforeend','<style>img.ph,div.ph{width:100%;height:100%;object-fit:cover;display:block;background:#d9d6d0}div.ph svg{width:100%;height:100%;display:block}</style>');
+/* Каталог проектов (образец) */
+var PROJECTS=(function(){
+  var names=['Уют','Северный','Тихая гавань','Купава','Таганай','Ильмень','Зюраткуль','Увильды','Сосновый','Кедр','Рассвет','Берёзка','Миасс','Аракуль','Иремель','Тургояк','Уральский','Степной','Зеленый мыс','Шершни','Ветлуга','Озёрный','Лесная поляна','Кыштым','Каштак','Смолино','Полетаево','Еланчик','Баландино','Новоселье','Кремлёвский','Классик','Скандинавия','Минима','Лофт 120','Прованс','Баварец','Шале','Европа','Гармония','Семейный','Терем','Усадьба','Модерн','Престиж','Панорама','Онега','Бриз','Ладога','Простор'];
+  var mats=[['Газоблок','#E9DCC8',33000],['Кирпич','#B5553E',42000],['Брус','#C79A64',36000],['Каркас','#D8C7AE',27000]];
+  var roofs=['#5B3B32','#3A3F45','#2F4A5C','#6B3A2C','#4A3A30'];
+  /* фото проектов: id, материал, этажность (1 / 1.5 / 2), гараж */
+  var PH=[
+   ['1722491945502-abb7235593f2','Кирпич',2,0],['1777106322601-578dc9213ace','Газоблок',2,1],['1706047924901-28129757dde7','Брус',2,0],['1784932328904-858813ec31c4','Каркас',2,0],
+   ['1786550860372-116b871a1697','Газоблок',1,1],['1570793005386-840846445fed','Брус',1,0],['1560170412-0f7df0eb0fb1','Кирпич',2,0],['1781797221329-c3d083ab6d99','Каркас',2,1],
+   ['1602657952211-bd6fbe4d2d78','Газоблок',2,0],['1705372334339-b9a3a082776e','Брус',1.5,0],['1722491945538-3bc843767169','Кирпич',2,0],['1784932328897-ba9e9df97a93','Каркас',2,0],
+   ['1571168538867-ad36fe110cc4','Газоблок',1,0],['1568605114967-8130f3a36994','Брус',2,0],['1605276373954-0c4a0dac5b12','Кирпич',2,1],['1697299261580-876d107bf090','Каркас',1.5,0],
+   ['1628012209120-d9db7abf7eab','Газоблок',2,0],['1605018075968-b014b8d2e487','Брус',2,0],['1605276374104-dee2a0ed3cd6','Кирпич',2,1],['1627141234469-24711efb373c','Каркас',2,0],
+   ['1683717455768-4572af43ed3e','Газоблок',1.5,0],['1720876884400-fe4b13f8af72','Брус',1.5,0],['1773429963191-9067803abf88','Кирпич',2,0],['1564703048291-bcf7f001d83d','Каркас',2,0],
+   ['1523217582562-09d0def993a6','Газоблок',2,0],['1576442850492-dae97d3e0129','Брус',1.5,0],['1607617293587-e54fd4be8d02','Кирпич',2,0],['1469964062538-06fad433a132','Каркас',1.5,0],
+   ['1633354747567-e0682586f082','Газоблок',2,0],['1609319172668-8b4f021f3b7b','Брус',2,0],['1758350764225-33664d263ea5','Кирпич',1.5,0],['1781269986378-a2f366df4d0f','Каркас',2,0],
+   ['1580587771525-78b9dba3b914','Газоблок',2,0],['1506429937242-f846f7c03553','Брус',2,0],['1570127828934-c60aa3e1e5af','Кирпич',2,0],['1787094644170-f4ab47dcf849','Каркас',2,0],
+   ['1657346088167-b982455bf29a','Газоблок',2,0],['1644776056304-aa4d9243147a','Брус',2,0],['1613977257363-707ba9348227','Газоблок',2,0],['1772313952254-dae19b91854b','Каркас',2,0],
+   ['1691425700585-c108acad6467','Газоблок',2,0],['1594540992254-0e2239661647','Брус',2,0],['1588880331179-bc9b93a8cb5e','Кирпич',1.5,0],['1768941124460-6fa7161715ff','Каркас',2,1],
+   ['1711114378455-b1f479d94a19','Газоблок',1,0],['1737905430339-92513c46d98e','Брус',2,0],['1633355289074-bec9b27c8ff9','Кирпич',2,0],['1610569244414-5e7453a447a8','Каркас',2,0],
+   ['1744311971549-9c529b60b98a','Газоблок',1,0],['1600596542815-ffad4c1539a9','Газоблок',2,0]];
+  var MP={'Газоблок':0,'Кирпич':1,'Брус':2,'Каркас':3};
+  var out=[];
+  for(var i=0;i<names.length;i++){
+    var ph=PH[i%PH.length],m=mats[MP[ph[1]]],fl=ph[2],area=Math.round((fl===1?62:fl===2?118:96)+((i*37)%70)),
+        fp=area/(fl===2?2:fl===1.5?1.6:1)*1.12,w=Math.max(6,Math.round(Math.sqrt(fp*0.75))),l=Math.round(fp/w);
+    var price=Math.round(area*m[2]*(fl===2?0.95:1)/10000)*10000,
+        roof=(i%9===4||i%11===7)?'flat':(i%3===1?'hip':'gable'),
+        house={floors:fl===2?2:1,attic:fl===1.5,roof:fl===1.5?'gable':roof,wall:m[1],roofc:roof==='flat'?'#33373C':roofs[i%5],garage:!!ph[3],terrace:i%5===2,w:fl===1?Math.min(210,150+area/2):Math.min(230,170+area/6),sky:['day','day','dusk','day','grey'][i%5]};
+    if(roof==='flat'&&fl!==1.5){house.trim='#33373C';house.wall=m[0]==='Брус'?'#B98A57':'#EDEDEA';}
+    out.push({id:i+1,name:'«'+names[i]+'»',mat:m[0],floors:fl,area:area,size:w+'×'+Math.max(l,6),beds:Math.max(2,Math.round(area/38)),baths:fl===1?1:2,garage:house.garage,price:price,days:Math.round(60+area*0.6),
+      hit:[2,5,11,17,23,31].indexOf(i)>=0,sale:[3,8,14,26,40].indexOf(i)>=0?10:0,novelty:i>=44,house:house,photo:i<PH.length?ph[0]:null});
+  }
+  return out;
+})();
+function rub(n){return n.toLocaleString('ru-RU').replace(/,/g,' ')+' ₽'}
+function flLabel(f){return f===1?'1 этаж':f===2?'2 этажа':'1 этаж + мансарда'}
+
+var $=function(s){return document.querySelector(s)},$$=function(s){return [].slice.call(document.querySelectorAll(s))};
+addEventListener('scroll',function(){$('#hd').classList.toggle('sc',scrollY>40)},{passive:true});
+
+/* ---------- 3D: процедурные текстуры ---------- */
+var MAT={'Газоблок':{c:'#E6DED2',k:'block',rate:33000},'Кирпич':{c:'#A44C36',k:'brick',rate:42000},'Брус':{c:'#B6834F',k:'log',rate:36000},'Каркас':{c:'#C3C8CE',k:'siding',rate:27000}};
+var ROOFC=['#3A3F45','#5B3B32','#8C3A2B','#3E5545'];
+var TEX={};
+function canvasTex(kind,col){
+  var key=kind+col;if(TEX[key])return TEX[key];
+  var c=document.createElement('canvas');c.width=c.height=256;var g=c.getContext('2d');
+  function shade(hex,a){var n=parseInt(hex.slice(1),16),r=(n>>16)+a,gg=((n>>8)&255)+a,b=(n&255)+a;r=Math.max(0,Math.min(255,r));gg=Math.max(0,Math.min(255,gg));b=Math.max(0,Math.min(255,b));return 'rgb('+r+','+gg+','+b+')'}
+  var i,x,y;
+  if(kind==='brick'){g.fillStyle='#CFC5B8';g.fillRect(0,0,256,256);for(y=0;y<256;y+=16){var off=(y/16)%2?0:-32;for(x=off;x<256;x+=64){g.fillStyle=shade(col,Math.round((Math.random()-.5)*36));g.fillRect(x+2,y+2,60,12)}}}
+  else if(kind==='log'){for(y=0;y<256;y+=32){var gr=g.createLinearGradient(0,y,0,y+32);gr.addColorStop(0,shade(col,-46));gr.addColorStop(.25,shade(col,10));gr.addColorStop(.6,shade(col,0));gr.addColorStop(1,shade(col,-56));g.fillStyle=gr;g.fillRect(0,y,256,32)}for(i=0;i<500;i++){g.fillStyle='rgba(60,35,15,'+(Math.random()*.12)+')';g.fillRect(Math.random()*256,Math.random()*256,Math.random()*24,1)}}
+  else if(kind==='siding'){for(y=0;y<256;y+=21){var gs=g.createLinearGradient(0,y,0,y+21);gs.addColorStop(0,shade(col,12));gs.addColorStop(1,shade(col,-14));g.fillStyle=gs;g.fillRect(0,y,256,21);g.fillStyle='rgba(0,0,0,.25)';g.fillRect(0,y+20,256,1.5)}}
+  else{g.fillStyle=col;g.fillRect(0,0,256,256);for(i=0;i<2400;i++){g.fillStyle='rgba(0,0,0,'+(Math.random()*.05)+')';g.fillRect(Math.random()*256,Math.random()*256,2,2)}g.strokeStyle='rgba(0,0,0,.07)';g.lineWidth=1;for(y=0;y<=256;y+=42){g.beginPath();g.moveTo(0,y);g.lineTo(256,y);g.stroke();var o=(y/42)%2?0:64;for(x=o;x<256;x+=128){g.beginPath();g.moveTo(x,y);g.lineTo(x,y+42);g.stroke()}}}
+  var t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.encoding=THREE.sRGBEncoding;t.anisotropy=4;TEX[key]=t;return t;
+}
+
+/* ---------- 3D: модель дома ---------- */
+function buildHouse(cfg,shared){
+  var root=new THREE.Group(),parts={};
+  var m=MAT[cfg.mat],fl=cfg.floors,fp=cfg.area/fl,W=Math.sqrt(fp*1.35),D=fp/W,FH=3,B=.6;
+  W=Math.max(7,Math.min(17,W));D=Math.max(6,Math.min(13,D));
+  function mesh(geo,mat,cast){var o=new THREE.Mesh(geo,mat);o.castShadow=cast!==false;o.receiveShadow=true;return o}
+  function std(col,o){return new THREE.MeshStandardMaterial(Object.assign({color:col,roughness:.85,metalness:0},o||{}))}
+  var wallTex=canvasTex(m.k,m.c).clone();wallTex.needsUpdate=true;wallTex.repeat.set(W/(m.k==='brick'?2.2:m.k==='block'?3:2.6),FH/(m.k==='log'?1.9:m.k==='brick'?1.2:1.6));
+  var wallM=std('#ffffff',{map:wallTex,roughness:.92});
+  var trimM=std(cfg.mat==='Брус'?'#6B4A2E':'#F2EFEA',{roughness:.6});
+  var roofM=std(cfg.roofC,{roughness:.55,metalness:.25});
+  var glassM=shared.glass,frameM=std(cfg.mat==='Брус'?'#5A3D25':'#F4F2EE',{roughness:.5});
+  var concM=std('#9A9DA1',{roughness:.95});
+  // фундамент
+  var fnd=new THREE.Group();var slab=mesh(new THREE.BoxGeometry(W+.7,B,D+.7),concM);slab.position.y=B/2;fnd.add(slab);root.add(fnd);parts.found=fnd;
+  function win(g,x,y,z,ry,w,h){var f=mesh(new THREE.BoxGeometry(w+.18,h+.18,.12),frameM);var gl=mesh(new THREE.BoxGeometry(w,h,.16),glassM,false);var mu=mesh(new THREE.BoxGeometry(.07,h,.18),frameM,false);var sill=mesh(new THREE.BoxGeometry(w+.35,.08,.3),trimM);sill.position.set(0,-h/2-.1,.1);var o=new THREE.Group();o.add(f,gl,mu,sill);o.position.set(x,y,z);o.rotation.y=ry;g.add(o)}
+  parts.floors=[];
+  for(var f=0;f<fl;f++){
+    var g=new THREE.Group(),y0=B+f*FH;
+    var w=mesh(new THREE.BoxGeometry(W,FH,D),wallM);w.position.y=y0+FH/2;g.add(w);
+    var belt=mesh(new THREE.BoxGeometry(W+.12,.16,D+.12),trimM);belt.position.y=y0+FH-.02;g.add(belt);
+    var n=Math.max(2,Math.floor(W/2.7)),step=W/n,ww=Math.min(1.6,step*.55),wh=1.55,wy=y0+1.65;
+    for(var i=0;i<n;i++){var x=-W/2+step*(i+.5);
+      if(f===0&&i===Math.floor(n/2)){var door=mesh(new THREE.BoxGeometry(1.15,2.3,.16),std('#3B2A1E',{roughness:.5}));door.position.set(x,y0+1.15,D/2+.03);g.add(door);var cano=mesh(new THREE.BoxGeometry(2,.12,1.1),roofM);cano.position.set(x,y0+2.65,D/2+.55);g.add(cano);parts.doorPos=new THREE.Vector3(x,y0+2.4,D/2+1.2);continue}
+      win(g,x,wy,D/2+.02,0,ww,wh);win(g,x,wy,-D/2-.02,Math.PI,ww,wh)}
+    var ns=Math.max(1,Math.floor(D/3.4)),ss=D/ns;for(var j=0;j<ns;j++){var z=-D/2+ss*(j+.5);win(g,W/2+.02,wy,z,Math.PI/2,1.2,wh);win(g,-W/2-.02,wy,z,-Math.PI/2,1.2,wh)}
+    root.add(g);parts.floors.push(g);
+  }
+  var top=B+fl*FH,roof=new THREE.Group();
+  if(cfg.roof==='flat'){var rs=mesh(new THREE.BoxGeometry(W+.6,.35,D+.6),std('#2F3338',{roughness:.7}));rs.position.y=top+.17;roof.add(rs);var par=mesh(new THREE.BoxGeometry(W+.6,.45,.25),trimM);par.position.set(0,top+.55,D/2+.18);roof.add(par);var par2=par.clone();par2.position.z=-D/2-.18;roof.add(par2)}
+  else{var ov=.55,rh=Math.min(3.6,D*.38),sl=Math.sqrt(Math.pow(D/2+ov,2)+rh*rh),ang=Math.atan2(rh,D/2+ov);
+    var sh=new THREE.Shape();sh.moveTo(-D/2,0);sh.lineTo(D/2,0);sh.lineTo(0,rh-.12);sh.lineTo(-D/2,0);
+    var ag=new THREE.ExtrudeGeometry(sh,{depth:W,bevelEnabled:false});ag.rotateY(Math.PI/2);ag.translate(-W/2,0,0);var att=mesh(ag,std(m.c,{roughness:.9}));att.position.y=top;roof.add(att);
+    [1,-1].forEach(function(s){var p=mesh(new THREE.BoxGeometry(W+2*ov,.16,sl),roofM);p.position.set(0,top+rh/2-.02,s*(D/2+ov)/2);p.rotation.x=s*ang;roof.add(p)});
+    var ridge=mesh(new THREE.BoxGeometry(W+2*ov,.18,.3),roofM);ridge.position.y=top+rh+.02;roof.add(ridge);
+    var ch=mesh(new THREE.BoxGeometry(.7,2.2,.7),std('#4A4440'));ch.position.set(W*.26,top+rh*.55+.6,-D*.16);roof.add(ch);
+  }
+  root.add(roof);parts.roof=roof;
+  // гараж и терраса
+  var ex=new THREE.Group();
+  if(cfg.garage){var gw=4.3,gd=Math.min(6.5,D),gh=3;var gb=mesh(new THREE.BoxGeometry(gw,gh,gd),wallM);gb.position.set(W/2+gw/2,B+gh/2,D/2-gd/2);ex.add(gb);var gr=mesh(new THREE.BoxGeometry(gw+.4,.3,gd+.4),std('#2F3338'));gr.position.set(W/2+gw/2,B+gh+.15,D/2-gd/2);ex.add(gr);var gdoor=mesh(new THREE.BoxGeometry(3,2.3,.1),std('#D8DBDF',{roughness:.4,metalness:.4}));gdoor.position.set(W/2+gw/2,B+1.15,D/2+.04);ex.add(gdoor);var gbase=mesh(new THREE.BoxGeometry(gw+.2,B,gd+.2),concM);gbase.position.set(W/2+gw/2,B/2,D/2-gd/2);ex.add(gbase)}
+  if(cfg.terrace){var tw=Math.min(W*.75,9),td=2.8,wood=std('#8A6542',{roughness:.8});var deck=mesh(new THREE.BoxGeometry(tw,.3,td),wood);deck.position.set(-W/2+tw/2+.4,B-.05,D/2+td/2);ex.add(deck);
+    for(var k=0;k<4;k++){var px=-W/2+.55+k*(tw-.3)/3;var post=mesh(new THREE.BoxGeometry(.14,1,.14),wood);post.position.set(px,B+.55,D/2+td-.1);ex.add(post)}
+    var rail=mesh(new THREE.BoxGeometry(tw,.1,.1),wood);rail.position.set(-W/2+tw/2+.4,B+1.05,D/2+td-.1);ex.add(rail);
+    var tab=mesh(new THREE.CylinderGeometry(.5,.5,.06,20),std('#EDE7DD'));tab.position.set(-W/2+tw*.45,B+.85,D/2+td*.5);ex.add(tab);var tl=mesh(new THREE.CylinderGeometry(.06,.06,.75,8),wood);tl.position.set(-W/2+tw*.45,B+.45,D/2+td*.5);ex.add(tl)}
+  root.add(ex);parts.extras=ex;
+  // участок
+  var site=new THREE.Group();
+  var path=mesh(new THREE.BoxGeometry(1.6,.06,7),std('#BDB4A6',{roughness:1}),false);path.position.set(parts.doorPos?parts.doorPos.x:0,.03,D/2+(cfg.terrace?2.8:0)+3.5);site.add(path);
+  var R=Math.max(W,D)/2+7;[[-1.1,.9,1],[-.2,1,.8],[2.3,1,1.1],[2.9,1,.9],[3.6,.95,1.2],[4.4,1,.85],[5.3,1,1]].forEach(function(a){var tr=new THREE.Group(),s=a[2],ang2=a[0];var tk=mesh(new THREE.CylinderGeometry(.14*s,.2*s,1.6*s,8),std('#5B4636'));tk.position.y=.8*s;tr.add(tk);var c1=mesh(new THREE.ConeGeometry(1.5*s,3.2*s,9),std(a[0]>3?'#3F6B45':'#4E7A4C'));c1.position.y=2.9*s;tr.add(c1);var c2=mesh(new THREE.ConeGeometry(1.1*s,2.4*s,9),std('#5A8A55'));c2.position.y=4.1*s;tr.add(c2);tr.position.set(Math.cos(ang2)*R*a[1],0,Math.sin(ang2)*R*a[1]);site.add(tr)});
+  root.add(site);parts.site=site;
+  parts.W=W;parts.D=D;parts.H=top+(cfg.roof==='flat'?.6:Math.min(3.6,D*.38));
+  return {root:root,parts:parts};
+}
+function disposeTree(o){o.traverse(function(n){if(n.geometry)n.geometry.dispose();if(n.material&&n.material!==SHARED.glass){if(n.material.map&&!Object.values(TEX).includes(n.material.map))n.material.map.dispose();n.material.dispose()}})}
+
+/* ---------- 3D: сцена ---------- */
+var HAS3D=false,SHARED=null;
+try{HAS3D=!!window.THREE&&!!(function(){var c=document.createElement('canvas');return c.getContext('webgl')||c.getContext('experimental-webgl')})()}catch(e){HAS3D=false}
+if(HAS3D)SHARED={glass:new THREE.MeshStandardMaterial({color:'#2B3D52',roughness:.12,metalness:.7,emissive:new THREE.Color('#FFB257'),emissiveIntensity:0})};
+function Viewer(canvas,opt){
+  var self=this;this.opt=opt||{};
+  var r=new THREE.WebGLRenderer({canvas:canvas,antialias:true,alpha:true});r.setPixelRatio(Math.min(2,devicePixelRatio||1));r.outputEncoding=THREE.sRGBEncoding;r.shadowMap.enabled=true;r.shadowMap.type=THREE.PCFSoftShadowMap;r.toneMapping=THREE.ACESFilmicToneMapping;r.toneMappingExposure=1.05;
+  var sc=new THREE.Scene(),cam=new THREE.PerspectiveCamera(36,1,.1,400);
+  var hemi=new THREE.HemisphereLight('#DCEBFF','#5C4C3A',.75);sc.add(hemi);
+  var sun=new THREE.DirectionalLight('#FFF3DE',1.15);sun.position.set(18,26,14);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);var sc2=sun.shadow.camera;sc2.left=sc2.bottom=-24;sc2.right=sc2.top=24;sc2.far=90;sun.shadow.bias=-.0005;sc.add(sun);
+  var porch=new THREE.PointLight('#FFB45E',0,14,2);sc.add(porch);
+  var ground=new THREE.Mesh(new THREE.CircleGeometry(70,64),new THREE.MeshStandardMaterial({color:opt.dark?'#1A2219':'#7C9A62',roughness:1}));ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;sc.add(ground);
+  var lawn=new THREE.Mesh(new THREE.CircleGeometry(16,48),new THREE.MeshStandardMaterial({color:opt.dark?'#222C1F':'#8BAA6E',roughness:1}));lawn.rotation.x=-Math.PI/2;lawn.position.y=.01;lawn.receiveShadow=true;sc.add(lawn);
+  this.r=r;this.sc=sc;this.cam=cam;this.hemi=hemi;this.sun=sun;this.porch=porch;this.ground=ground;
+  this.yaw=-.55;this.pitch=.32;this.dist=34;this.auto=!!opt.auto;this.t=0;this.house=null;this.expl=0;this.explT=0;this.night=0;this.nightT=0;this.visible=true;this.prog=1;
+  this.resize=function(){var w=canvas.clientWidth,h=canvas.clientHeight;if(!w||!h)return;r.setSize(w,h,false);cam.aspect=w/h;if(opt.shift){if(w>900)cam.setViewOffset(w,h,-w*.2,0,w,h);else cam.setViewOffset(w,h,0,-h*.2,w,h)}cam.updateProjectionMatrix();self.fit()};
+  addEventListener('resize',this.resize);
+  new IntersectionObserver(function(e){self.visible=e[0].isIntersecting}).observe(canvas);
+  var last=performance.now();
+  function loop(now){requestAnimationFrame(loop);var dt=Math.min(.05,(now-last)/1000);last=now;if(!self.visible||!self.house)return;self.t+=dt;self.step(dt);r.render(sc,cam)}
+  requestAnimationFrame(loop);
+}
+Viewer.prototype.setHouse=function(cfg){
+  if(this.house){this.sc.remove(this.house.root);disposeTree(this.house.root)}
+  this.house=buildHouse(cfg,SHARED);this.sc.add(this.house.root);this.cfg=cfg;
+  var p=this.house.parts;this.base={};var self=this;['found','roof','extras'].forEach(function(k){self.base[k]=p[k].position.y});p.floors.forEach(function(f,i){self.base['f'+i]=f.position.y});
+  this.fit();
+};
+Viewer.prototype.fit=function(){if(!this.house)return;var p=this.house.parts,sz=Math.max(p.W+(this.cfg.garage?4.3:0),p.D+5,p.H*1.4);var a=this.cam.aspect||1.5;this.dist=sz*(a<1?2.9:2.05)+6;this.target=new THREE.Vector3(this.cfg.garage?2:0,p.H*.42,1)};
+Viewer.prototype.step=function(dt){
+  var p=this.house.parts,self=this;
+  if(this.auto&&!this.drag)this.yaw+=dt*.12;
+  // ночь
+  this.night+=(this.nightT-this.night)*Math.min(1,dt*3);var n=this.night;
+  this.hemi.intensity=.75-.6*n;this.sun.intensity=1.15-.95*n;this.sun.color.setRGB(1-.45*n,.95-.3*n,.87+.13*n);
+  SHARED.glass.emissiveIntensity=n*1.3;this.porch.intensity=n*1.6;if(p.doorPos)this.porch.position.copy(p.doorPos);
+  this.r.toneMappingExposure=1.05-.25*n;
+  // сборка (герой) или разбор по слоям (конфигуратор)
+  var pr=this.prog;function ease(t){t=Math.max(0,Math.min(1,t));return 1-Math.pow(1-t,3)}
+  function seg(a,b){return ease((pr-a)/(b-a))}
+  var hasF2=p.floors.length>1;
+  var kf={found:[0,.16],f0:[.16,.38],f1:[.38,.56],roof:hasF2?[.56,.76]:[.42,.7],extras:[.76,.92]};
+  this.expl+=(this.explT-this.expl)*Math.min(1,dt*4);var e=this.expl;
+  var t;
+  t=seg(kf.found[0],kf.found[1]);p.found.visible=t>0;p.found.position.y=this.base.found-(1-t)*2;
+  p.floors.forEach(function(fg,i){var k=kf['f'+i];var tt=seg(k[0],k[1]);fg.visible=tt>0;fg.position.y=self.base['f'+i]+(1-tt)*14+e*(i+1)*1.6});
+  t=seg(kf.roof[0],kf.roof[1]);p.roof.visible=t>0;p.roof.position.y=this.base.roof+(1-t)*14+e*(p.floors.length+1)*1.6;
+  t=seg(kf.extras[0],kf.extras[1]);p.extras.visible=t>0;p.extras.scale.setScalar(Math.max(.001,t));
+  // камера
+  var tg=this.target,y=this.yaw+(this.px||0)*.25,pt=Math.max(.08,Math.min(1.1,this.pitch+(this.py||0)*.1)),d=this.dist*(1+e*.12);
+  this.cam.position.set(tg.x+Math.sin(y)*Math.cos(pt)*d,tg.y+Math.sin(pt)*d,tg.z+Math.cos(y)*Math.cos(pt)*d);this.cam.lookAt(tg.x,tg.y+e*2,tg.z);
+};
+Viewer.prototype.enableDrag=function(el){var self=this,sx,sy,yaw0,p0;
+  el.addEventListener('pointerdown',function(ev){if(ev.target.closest('button'))return;self.drag=true;sx=ev.clientX;sy=ev.clientY;yaw0=self.yaw;p0=self.pitch;el.setPointerCapture(ev.pointerId);$('#hint').style.opacity=0});
+  el.addEventListener('pointermove',function(ev){if(!self.drag)return;self.yaw=yaw0-(ev.clientX-sx)*.008;if(ev.pointerType==='mouse')self.pitch=Math.max(.08,Math.min(1.1,p0+(ev.clientY-sy)*.005))});
+  ['pointerup','pointercancel'].forEach(function(t){el.addEventListener(t,function(){self.drag=false})});
+};
+
+/* ---------- 1. Сборка при прокрутке ---------- */
+var asmV=null;
+if(HAS3D){try{asmV=new Viewer($('#asmCv'),{dark:true,shift:true});asmV.setHouse({mat:'Газоблок',floors:2,area:170,roof:'gable',roofC:'#3A3F45',garage:true,terrace:true});asmV.nightT=.7;asmV.night=.7;asmV.prog=0;asmV.resize()}catch(e){asmV=null}}
+if(!asmV){$('#asmFb').innerHTML=pic('1748063578185-3d68121b11ff',{},'Современный дом вечером',2000);$('#asmCv').style.display='none';$('#asmFb').insertAdjacentHTML('beforeend','<div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(12,14,18,.85),rgba(12,14,18,.3))"></div>')}
+var stepsLi=$$('#steps li'),asmEl=$('.asm');
+function onAsm(){var r=asmEl.getBoundingClientRect(),total=asmEl.offsetHeight-innerHeight,p=Math.max(0,Math.min(1,-r.top/total));
+  if(asmV){asmV.prog=Math.min(1,p*1.08);asmV.yaw=-.75+p*1.5;asmV.nightT=p>.9?1:.7}
+  $('#pbar').style.width=(p*100).toFixed(1)+'%';$('#ppct').textContent=Math.round(p*100)+'%';$('#sh').style.opacity=p>.03?0:1;
+  var b=[0,.16,.38,.56,.76,.92,2];stepsLi.forEach(function(li,i){li.classList.toggle('on',p*1.08>=b[i]&&p*1.08<b[i+1]);li.classList.toggle('done',p*1.08>=b[i+1])})}
+addEventListener('scroll',onAsm,{passive:true});onAsm();
+addEventListener('pointermove',function(e){if(asmV){asmV.px=(e.clientX/innerWidth-.5);asmV.py=(e.clientY/innerHeight-.5)}},{passive:true});
+
+/* ---------- 2. Конфигуратор ---------- */
+var KOMP=[['Коробка',['walls','roof']],['Тёплый контур',['walls','roof','win']],['Под ключ',['walls','roof','win','net','fin']],['Премиум',['walls','roof','win','net','fin','prem']]];
+var SH={walls:[.42,'Стены, перекрытия, утепление'],roof:[.13,'Кровля и водосток'],win:[.10,'Окна и входные двери'],net:[.17,'Инженерные сети: отопление, вода, электрика'],fin:[.18,'Чистовая отделка'],prem:[.30,'Дизайн-проект интерьера и «умный дом»']};
+var cfg={mat:'Газоблок',floors:2,area:150,roof:'gable',roofC:ROOFC[0],garage:false,terrace:true,k:2};
+$('#cMat').innerHTML=Object.keys(MAT).map(function(k,i){return '<label><input type="radio" name="mt" value="'+k+'"'+(i?'':' checked')+'><span>'+k+'</span></label>'}).join('');
+$('#cK').innerHTML=KOMP.map(function(k,i){return '<label><input type="radio" name="kp" value="'+i+'"'+(i===2?' checked':'')+'><span>'+k[0]+'</span></label>'}).join('');
+$('#cRc').innerHTML=ROOFC.map(function(c,i){return '<label title="Цвет кровли"><input type="radio" name="rc" value="'+c+'"'+(i?'':' checked')+' aria-label="Цвет кровли '+(i+1)+'"><span style="background:'+c+'"></span></label>'}).join('');
+var cfgV=null;
+if(HAS3D){try{cfgV=new Viewer($('#cfgCv'),{auto:true});cfgV.enableDrag($('#view'));cfgV.setHouse(cfg);cfgV.resize()}catch(e){cfgV=null}}
+if(!cfgV){$('#cfgFb').innerHTML=pic('1777106322601-578dc9213ace',{},'Дом',1200);$('#cfgCv').style.display='none';$('.tb').style.display='none';$('#hint').style.display='none'}
+function calc(){var rate=MAT[cfg.mat].rate,base=cfg.area*rate,fp=cfg.area/cfg.floors,lines=[];
+  lines.push(['Фундамент — монолитная плита, '+Math.round(fp)+' м²',Math.round(fp*6500)]);
+  KOMP[cfg.k][1].forEach(function(s){var v=base*SH[s][0];if(s==='roof'&&cfg.roof==='flat')v*=1.08;if(s==='walls'&&cfg.floors===1)v*=1.06;lines.push([SH[s][1],Math.round(v)])});
+  if(cfg.garage)lines.push(['Гараж на 1 автомобиль',890000]);if(cfg.terrace)lines.push(['Терраса 20 м² из лиственницы',380000]);
+  lines.push(['Проект, 3D-визуализация, геология участка',0]);
+  var tot=lines.reduce(function(s,l){return s+l[1]},0);tot=Math.round(tot/10000)*10000;
+  var wk=Math.round(10+cfg.area/14+cfg.k*2.5+(cfg.garage?1:0));return {lines:lines,tot:tot,wk:wk}}
+function renderCfg(){var c=calc();
+  $('#aV').textContent=cfg.area+' м²';$('#tot').textContent=rub(c.tot);$('#wks').textContent=c.wk+' нед.';
+  $('#smeta').innerHTML=c.lines.map(function(l){return '<tr'+(l[1]?'':' class="gift"')+'><td>'+l[0]+'</td><td>'+(l[1]?rub(Math.round(l[1]/1000)*1000):'в подарок')+'</td></tr>'}).join('')+'<tr><td><b>Итого, '+KOMP[cfg.k][0].toLowerCase()+'</b></td><td>'+rub(c.tot)+'</td></tr>';
+  $('#tag3d').innerHTML=cfg.mat+' · '+cfg.area+' м²<small>'+(cfg.floors===2?'2 этажа':'1 этаж')+(cfg.garage?' · гараж':'')+(cfg.terrace?' · терраса':'')+'</small>';
+  $('#bWa').href='https://wa.me/77777777777?text='+encodeURIComponent('Здравствуйте! Собрал дом в 3D: '+cfg.mat+', '+cfg.area+' м², '+(cfg.floors===2?'2 этажа':'1 этаж')+', '+KOMP[cfg.k][0]+(cfg.garage?', гараж':'')+(cfg.terrace?', терраса':'')+'. Сумма по калькулятору: '+rub(c.tot)+'.');
+}
+var rebuildT;function rebuild(){clearTimeout(rebuildT);rebuildT=setTimeout(function(){if(cfgV)cfgV.setHouse(Object.assign({},cfg))},90)}
+$('#panel').addEventListener('input',function(e){var t=e.target;
+  if(t.name==='mt')cfg.mat=t.value;else if(t.name==='fl')cfg.floors=+t.value;else if(t.id==='cA')cfg.area=+t.value;else if(t.name==='rf')cfg.roof=t.value;else if(t.name==='rc')cfg.roofC=t.value;else if(t.id==='oG')cfg.garage=t.checked;else if(t.id==='oT')cfg.terrace=t.checked;else if(t.name==='kp')cfg.k=+t.value;else return;
+  renderCfg();if(t.name!=='kp')rebuild()});
+function setCfgUI(){$$('[name=mt]').forEach(function(i){i.checked=i.value===cfg.mat});$$('[name=fl]').forEach(function(i){i.checked=+i.value===cfg.floors});$('#cA').value=cfg.area;$$('[name=rf]').forEach(function(i){i.checked=i.value===cfg.roof});$('#oG').checked=cfg.garage;$('#oT').checked=cfg.terrace;renderCfg();rebuild()}
+$('#bNight').onclick=function(){if(!cfgV)return;cfgV.nightT=cfgV.nightT?0:1;this.classList.toggle('on',!!cfgV.nightT);$('#view').classList.toggle('night',!!cfgV.nightT);this.textContent=cfgV.nightT?'☀️ День':'🌙 Вечер'};
+$('#bExpl').onclick=function(){if(!cfgV)return;cfgV.explT=cfgV.explT?0:1;this.classList.toggle('on',!!cfgV.explT)};
+$('#bRot').onclick=function(){if(!cfgV)return;cfgV.auto=!cfgV.auto;this.classList.toggle('on',cfgV.auto)};
+$('#bPdf').onclick=function(){var c=calc(),d=new Date();
+  $('#print').innerHTML='<h1>Строй дом в РОССИИ — смета</h1><div>'+d.toLocaleDateString('ru-RU')+' · предварительный расчёт по 3D-конфигуратору</div><p><b>Дом:</b> '+cfg.mat+', '+cfg.area+' м², '+(cfg.floors===2?'2 этажа':'1 этаж')+', кровля '+(cfg.roof==='flat'?'плоская':'двускатная')+(cfg.garage?', гараж':'')+(cfg.terrace?', терраса':'')+'<br><b>Комплектация:</b> '+KOMP[cfg.k][0]+' · <b>Срок:</b> '+c.wk+' недель</p><table><tr><th>Статья</th><th>Сумма</th></tr>'+c.lines.map(function(l){return '<tr><td>'+l[0]+'</td><td>'+(l[1]?rub(Math.round(l[1]/1000)*1000):'в подарок')+'</td></tr>'}).join('')+'<tr class="tot"><td>Итого</td><td>'+rub(c.tot)+'</td></tr></table><p style="margin-top:16px;color:#555">Цена фиксируется в договоре после выезда инженера на участок. Тел. +7-777-777-77-77 · Все данные — образец.</p>';
+  window.print()};
+renderCfg();
+
+/* ---------- 3. Проекты ---------- */
+var PICK=[11,1,2,13,4,9,18,28,36,21];
+$('#strip').innerHTML=PICK.map(function(i){var p=PROJECTS[i];return '<article class="pj"><div class="im">'+projMedia(p,700)+'</div><div class="bd"><h3>'+p.name+'</h3><div class="sub">'+p.area+' м² · '+p.mat+' · '+flLabel(p.floors)+(p.garage?' · гараж':'')+'</div><div class="ft"><b>от '+rub(p.price)+'</b><button class="btn sm line" type="button" data-p="'+i+'">Открыть в 3D</button></div></div></article>'}).join('');
+$('#strip').addEventListener('click',function(e){var b=e.target.closest('[data-p]');if(!b)return;var p=PROJECTS[+b.dataset.p];cfg.mat=p.mat;cfg.floors=p.floors>1?2:1;cfg.area=Math.max(70,Math.min(320,Math.round(p.area/5)*5));cfg.roof=p.house.roof==='flat'?'flat':'gable';cfg.garage=!!p.garage;setCfgUI();document.getElementById('config').scrollIntoView({behavior:'smooth'})});
+
+/* ---------- 4. Планировка ---------- */
+var FLOORS=[[['Гостиная-кухня',0,0,7,6],['Гостевая спальня',7,0,5,4],['Санузел',7,4,2.5,2.5],['Котельная',9.5,4,2.5,2.5],['Прихожая',0,6,4,4],['Кабинет',4,6,3,4],['Гардероб и кладовая',7,6.5,5,3.5]],
+  [['Мастер-спальня',0,0,5.5,5],['Детская',5.5,0,3.25,5],['Детская',8.75,0,3.25,5],['Гардероб',0,5,2.5,2.5],['Санузел мастер',2.5,5,3,2.5],['Холл',5.5,5,6.5,2.5],['Санузел',0,7.5,4,2.5],['Игровая',4,7.5,8,2.5]]];
+var curF=0,S=52,PAD=34;
+function area(r){return Math.round(r[3]*r[4]*10)/10}
+function drawPlan(sel){var rooms=FLOORS[curF],w=12*S+PAD*2,h=10*S+PAD*2+20;
+  var s='<svg viewBox="0 0 '+w+' '+h+'" role="img" aria-label="Планировка '+(curF+1)+' этажа">';
+  rooms.forEach(function(r,i){var x=PAD+r[1]*S,y=PAD+r[2]*S,ww=r[3]*S,hh=r[4]*S;s+='<rect class="rm'+(i===sel?' on':'')+'" data-i="'+i+'" x="'+x+'" y="'+y+'" width="'+ww+'" height="'+hh+'"/>';
+    var fs=ww<150?12:14;s+='<text x="'+(x+ww/2)+'" y="'+(y+hh/2-2)+'" text-anchor="middle" font-size="'+fs+'" font-weight="700">'+r[0]+'</text><text x="'+(x+ww/2)+'" y="'+(y+hh/2+16)+'" text-anchor="middle" font-size="'+(fs-1)+'" fill="#7A746A">'+area(r)+' м²</text>'});
+  s+='<rect x="'+PAD+'" y="'+PAD+'" width="'+12*S+'" height="'+10*S+'" fill="none" stroke="#2B2A28" stroke-width="7"/>';
+  if(curF===0){s+='<rect x="'+(PAD+1.4*S)+'" y="'+(PAD+10*S-4)+'" width="'+1.2*S+'" height="8" fill="#F3EFE8"/>'}
+  s+='<line x1="'+PAD+'" x2="'+(PAD+12*S)+'" y1="'+(h-14)+'" y2="'+(h-14)+'" stroke="#9A9184"/><text x="'+(PAD+6*S)+'" y="'+(h-20)+'" text-anchor="middle" font-size="13" fill="#7A746A">12 м</text></svg>';
+  $('#planSvg').innerHTML=s;
+  $('#pList').innerHTML=rooms.map(function(r,i){return '<li data-i="'+i+'" class="'+(i===sel?'on':'')+'"><span>'+r[0]+'</span><span>'+area(r)+' м²</span></li>'}).join('')+'<li style="cursor:default;color:var(--ink)"><b>Всего на этаже</b><b>'+Math.round(rooms.reduce(function(s,r){return s+area(r)},0))+' м²</b></li>';
+  var r=rooms[sel];$('#pCap').textContent=(curF+1)+' этаж';$('#pName').textContent=r[0];$('#pArea').textContent=area(r)+' м²'}
+function pickRoom(e){var t=e.target.closest('[data-i]');if(t)drawPlan(+t.dataset.i)}
+$('#planSvg').addEventListener('mouseover',pickRoom);$('#planSvg').addEventListener('click',pickRoom);$('#pList').addEventListener('click',pickRoom);$('#pList').addEventListener('mouseover',pickRoom);
+$$('.plan .fl button').forEach(function(b){b.onclick=function(){curF=+b.dataset.f;$$('.plan .fl button').forEach(function(x){x.classList.toggle('on',x===b)});drawPlan(0)}});
+drawPlan(0);
+
+/* ---------- 5. График ---------- */
+var G=[['Проект и согласования','архитектор, геология',0,3],['Фундамент','монолитная плита',3,3],['Стены и перекрытия','коробка дома',6,6],['Кровля','стропила, металлочерепица',11,3],['Окна и двери','тёплый контур',13,2],['Инженерные сети','отопление, вода, электрика',14,4],['Отделка','чистовая под ключ',17,6],['Благоустройство','отмостка, дорожки',21,2]];
+$('#gantt').innerHTML='<div class="gh"><span>Этап</span><div class="wk">'+Array.from({length:24},function(_,i){return '<span>'+(i%2?'':i+1)+'</span>'}).join('')+'</div></div>'+G.map(function(g){return '<div class="gr"><div class="nm">'+g[0]+'<small>'+g[1]+' · '+g[3]+' нед.</small></div><div class="tr"><i data-l="'+(g[2]/24*100)+'" data-w="'+(g[3]/24*100)+'" style="left:'+(g[2]/24*100)+'%"></i></div></div>'}).join('');
+
+/* ---------- 6. Личный кабинет ---------- */
+$$('.lk aside button').forEach(function(b){b.onclick=function(){$$('.lk aside button').forEach(function(x){x.classList.toggle('on',x===b)});$$('.lk .tab').forEach(function(t){t.classList.toggle('on',t.id===b.dataset.t)});if(b.dataset.t==='t5'){$('#unread').style.display='none';var ch=$('#chat');ch.scrollTop=ch.scrollHeight}}});
+var PHR=[['1610079732357-0d20c1a98ceb','Плита залита · 2 июня'],['1593786267440-550458cc882a','Коробка, леса · 3 июля'],['1639953803381-e9c3f3a38253','Стропильная система · 6 авг'],['1763665814965-b5c4b3547908','Монтаж кровли · сегодня'],['1676802037786-3697d60497ae','Стропила вблизи · 5 авг'],['1504307651254-35680f356dfd','Армирование · 28 мая']];
+$('#phGrid').innerHTML=PHR.map(function(p){return '<figure>'+pic(p[0],{stage:'walls'},p[1],600)+'<figcaption>'+p[1]+'</figcaption></figure>'}).join('');
+$('#cam').insertAdjacentHTML('afterbegin',pic('1763665814538-8ba04597286c',{stage:'walls',crane:true},'Камера на объекте',1200));
+function camT(){var d=new Date(Date.now()+5*3600000);$('#camTs').textContent=d.toISOString().slice(0,19).replace('T',' ')+' ЕКБ'}camT();setInterval(camT,1000);
+$('#chatF').onsubmit=function(e){e.preventDefault();var v=$('#chatI').value.trim();if(!v)return;var ch=$('#chat'),tm=new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});ch.insertAdjacentHTML('beforeend','<div class="msg me"><small>Вы · '+tm+'</small>'+v.replace(/</g,'&lt;')+'</div>');$('#chatI').value='';ch.scrollTop=ch.scrollHeight;
+  setTimeout(function(){ch.insertAdjacentHTML('beforeend','<div class="msg"><small>Сергей, прораб · '+tm+'</small>Принял! Отвечу подробно в течение часа, а пока — свежие фото во вкладке «Фотоотчёт».</div>');ch.scrollTop=ch.scrollHeight},1100)};
+
+/* ---------- 7. Материалы ---------- */
+var CM=[['Цена под ключ, ₽/м²','от 33 000','от 42 000','от 36 000','от 27 000'],['Срок стройки 150 м²','4–5 мес.','6–7 мес.','4–5 мес. + усадка','3–4 мес.'],['Тепло зимой',3,4,5,4],['Долговечность',4,5,3,3],['Усадка','нет','нет','до 6 месяцев','нет'],['Отделка фасада','штукатурка, облицовка','не нужна','не нужна','сайдинг, планкен'],['Для кого','оптимум цена/качество','на поколения','любителям дерева','быстро и бюджетно']];
+var MK=['Газоблок','Кирпич','Брус','Каркас'],cmSel=0;
+function dots(n){return '<span class="dots">'+'●'.repeat(n)+'<s>'+'●'.repeat(5-n)+'</s></span>'}
+function drawCmp(){$('#cmp').innerHTML='<tr><td></td>'+MK.map(function(m,i){return '<th data-c="'+i+'" class="'+(i===cmSel?'on':'')+'">'+m+'</th>'}).join('')+'</tr>'+CM.map(function(r){return '<tr><td>'+r[0]+'</td>'+r.slice(1).map(function(v,i){return '<td class="'+(i===cmSel?'on':'')+'">'+(typeof v==='number'?dots(v):v)+'</td>'}).join('')+'</tr>'}).join('')+'<tr><td></td>'+MK.map(function(m,i){return '<td class="'+(i===cmSel?'on':'')+'"><button class="btn sm line" type="button" data-to="'+m+'">В 3D</button></td>'}).join('')+'</tr>'}
+$('#cmp').addEventListener('click',function(e){var th=e.target.closest('[data-c]');if(th){cmSel=+th.dataset.c;drawCmp();return}var b=e.target.closest('[data-to]');if(b){cfg.mat=b.dataset.to;setCfgUI();document.getElementById('config').scrollIntoView({behavior:'smooth'})}});
+drawCmp();
+
+/* ---------- 8. Встреча ---------- */
+var mSlot='',dd=[];for(var i=1;i<=12;i++){var x=new Date(Date.now()+i*864e5);dd.push(x)}
+$('#mD').innerHTML=dd.map(function(x,i){return '<option value="'+i+'">'+x.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'})+'</option>'}).join('');
+function drawSlots(){var di=+$('#mD').value;$('#mS').innerHTML=['10:00','11:30','13:00','14:30','16:00','17:30','19:00','20:00'].map(function(s,i){var busy=(i*7+di*3)%5===0;return '<button type="button" data-s="'+s+'"'+(busy?' disabled':'')+' class="'+(mSlot===s?'on':'')+'">'+s+'</button>'}).join('')}
+$('#mD').onchange=function(){mSlot='';drawSlots()};drawSlots();
+$('#mS').onclick=function(e){var b=e.target.closest('button');if(!b||b.disabled)return;mSlot=b.dataset.s;$$('#mS button').forEach(function(x){x.classList.toggle('on',x===b)})};
+$('#meetF').onsubmit=function(e){e.preventDefault();var n=$('#mN').value.trim(),t=$('#mT').value.trim();
+  if(!n||t.replace(/\D/g,'').length<10){$('#mErr').textContent='Укажите имя и телефон';return}if(!mSlot){$('#mErr').textContent='Выберите время встречи';return}
+  var fm=document.querySelector('[name=fm]:checked').value,d=dd[+$('#mD').value],ds=d.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'});
+  var st=new Date(d);st.setHours(+mSlot.slice(0,2),+mSlot.slice(3),0,0);function f(z){return z.toISOString().replace(/[-:]/g,'').slice(0,15)+'Z'}var en=new Date(st.getTime()+3600000);
+  var ics='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//StroyDom//RU\r\nBEGIN:VEVENT\r\nUID:'+Date.now()+'@example.ru\r\nDTSTAMP:'+f(new Date())+'\r\nDTSTART:'+f(st)+'\r\nDTEND:'+f(en)+'\r\nSUMMARY:Встреча с архитектором — Строй дом в РОССИИ\r\nDESCRIPTION:Формат: '+fm+'\r\nEND:VEVENT\r\nEND:VCALENDAR';
+  var url=URL.createObjectURL(new Blob([ics],{type:'text/calendar'}));
+  $('#meetF').innerHTML='<div class="okbox"><div class="c">✓</div><h3 style="font-size:2rem">Вы записаны</h3><p style="color:var(--mute);max-width:36ch;margin:12px auto 22px">'+n.replace(/</g,'&lt;')+', ждём вас: '+fm.toLowerCase()+', '+ds+' в '+mSlot+'. Архитектор позвонит накануне.</p><a class="btn" href="'+url+'" download="vstrecha.ics">Добавить в календарь</a></div>'};
+
+/* ---------- появление ---------- */
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);if(e.target.id==='gantt')$$('#gantt .tr i').forEach(function(i,k){setTimeout(function(){i.style.width=i.dataset.w+'%'},k*90)});if(e.target.classList.contains('lk'))$('#ringC').setAttribute('stroke-dasharray','64 100')}})},{threshold:.12});
+$$('.rv').forEach(function(el){io.observe(el)});
+setTimeout(function(){if(scrollY===0&&document.documentElement.scrollHeight<=innerHeight+10)$$('.rv').forEach(function(e){e.classList.add('in')})},800);
+addEventListener('scroll',function chk(){var h=innerHeight;$$('.rv:not(.in)').forEach(function(e){var r=e.getBoundingClientRect();if(r.top<h*.95&&r.bottom>0)e.classList.add('in')})},{passive:true});
+</script>
+</body>
+</html>
