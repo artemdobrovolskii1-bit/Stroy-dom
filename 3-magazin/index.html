@@ -6,8 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Строй дом в РОССИИ — каталог проектов домов с ценами</title>
 <meta name="description" content="50 проектов домов с ценами под ключ. Фильтры по материалу, площади и этажности. Строим по всей Челябинской области.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="fonts/fonts.css" rel="stylesheet">
 <style>
 :root{--bg:#F3F5F8;--card:#fff;--ink:#0F1B2A;--mute:#5D6878;--acc:#2457D6;--acc-l:#E6EDFC;--y:#FFC43A;--red:#E5484D;--line:#DFE4EB;--r:16px}
 *{box-sizing:border-box}
@@ -305,8 +304,8 @@ function houseSVG(o){
 
 /* Реальные фото (Unsplash, бесплатная лицензия). Если фото не загрузилось — показываем иллюстрацию */
 var HSREG=[];
-function photoURL(id,w){return 'https://images.unsplash.com/photo-'+id+'?w='+(w||900)+'&q=72&auto=format&fit=crop'}
-function pic(id,house,alt,w){var k=HSREG.push(house||{})-1;return '<img class="ph" src="'+photoURL(id,w)+'" srcset="'+photoURL(id,Math.round((w||900)/2))+' '+Math.round((w||900)/2)+'w, '+photoURL(id,w)+' '+(w||900)+'w, '+photoURL(id,Math.min(2400,(w||900)*1.6|0))+' '+Math.min(2400,(w||900)*1.6|0)+'w" sizes="(max-width:760px) 100vw, 50vw" alt="'+(alt||'').replace(/"/g,'&quot;')+'" loading="lazy" decoding="async" onerror="phFail(this,'+k+')">'}
+function photoURL(id,w){return 'img/'+id+'.jpg'}
+function pic(id,house,alt,w){var k=HSREG.push(house||{})-1;return '<img class="ph" src="'+photoURL(id,w)+'" alt="'+(alt||'').replace(/"/g,'&quot;')+'" loading="lazy" decoding="async" onerror="phFail(this,'+k+')">'}
 function phFail(im,k){var d=document.createElement('div');d.className='ph';d.innerHTML=houseSVG(HSREG[k]);im.replaceWith(d)}
 function fillMedia(el){var cfg=JSON.parse(el.getAttribute('data-house')||'{}');el.insertAdjacentHTML('afterbegin',el.dataset.photo?pic(el.dataset.photo,cfg,el.dataset.alt||el.getAttribute('aria-label')||'',+el.dataset.w||1000):houseSVG(cfg))}
 function projMedia(p,w){return p.photo?pic(p.photo,p.house,'Проект дома '+p.name+', '+p.area+' м²',w||700):houseSVG(p.house)}
